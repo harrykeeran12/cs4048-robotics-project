@@ -2,7 +2,7 @@ from glob import glob
 import os
 from setuptools import find_packages, setup
 
-package_name = 'robot-football'
+package_name = 'robot_football'
 LAUNCHFILE = "robot_launch.py"
 WORLDFILE = "my_world.wbt"
 ROBOTURDF = "my_robot.urdf"

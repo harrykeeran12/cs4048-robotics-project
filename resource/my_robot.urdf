@@ -17,6 +17,6 @@
                 <alwaysOn>true</alwaysOn>
             </ros>
         </device>
-        <plugin type="robot-football.my_robot_driver.MyRobotDriver" />
+        <plugin type="robot_football.my_robot_driver.MyRobotDriver" />
     </webots>
 </robot>

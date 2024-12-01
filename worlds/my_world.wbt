@@ -7,6 +7,10 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/apartment_structure/protos/Wall.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/balls/protos/SoccerBall.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/floors/protos/CircleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/balls/protos/Ball.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/robotis/darwin-op/protos/RobotisOp2.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/robotis/darwin-op/protos/RobotisJersey.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/samples/contests/robocup/protos/RobocupSoccerField.proto"
 
 WorldInfo {
   basicTimeStep 16
@@ -21,6 +25,9 @@ TexturedBackgroundLight {
 }
 Floor {
   size 3.5 2
+  appearance Parquetry{
+    type "dark strip"
+  }
 }
 Wall {
   translation -1.75 -0.01 -0.01
@@ -60,6 +67,7 @@ Robot {
         axis 0 1 0
         anchor 0 0 0.025
       }
+
       device [
         RotationalMotor {
           name "left wheel motor"
@@ -184,4 +192,27 @@ Robot {
   }
   controller "<extern>"
   name "my_robot"
+}
+
+DEF BALL Ball {
+  translation 0.21 -0.270544 0.0395646
+  rotation 1 0 0 1.5707963267948966
+}
+DEF ROBOTISOP2 RobotisOp2 {
+  translation 1.1836644972626513 -0.18992731855477596 0.32638848483027677
+  rotation 1.1836644972626513 -0.18992731855477596 0.32638848483027677
+  controller "soccer"
+  jersey RobotisJersey {
+    jerseyColor 0 1 0
+  }
+  name "goalie"
+}
+DEF ROBOTISOP2 RobotisOp2 {
+  translation -0.9910752136977108 0.39306409906640727 0.3260481235943626
+  rotation 0.015125235736029636 0.6214832587172854 -0.7832814222092038 0.353685488535397
+  controller "soccer"
+  jersey RobotisJersey {
+  }
+  name "scorer"
+
 }

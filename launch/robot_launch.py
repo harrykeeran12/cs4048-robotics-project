@@ -7,18 +7,9 @@ from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.webots_controller import WebotsController
 
 
-# def get_ros2_control_spawners(*args):
-#     """Function to restart all nodes that must be restarted at the reset of the simulation."""
-#     obstacle_avoider = Node(
-#         package="robot-football",
-#         executable="obstacleavoider",
-#     )
-#     return [obstacle_avoider]
-
-
 def generate_launch_description():
     """The launch description for the package."""
-    package_dir = get_package_share_directory("robot-football")
+    package_dir = get_package_share_directory("robot_football")
     robot_description_path = os.path.join(package_dir, "resource", "my_robot.urdf")
 
     webots = WebotsLauncher(
@@ -36,6 +27,9 @@ def generate_launch_description():
         respawn=True,
     )
     print(my_robot_driver)
+
+    print(f"WEBOTS NODEPACKAGE = {webots._supervisor.describe()}")
+
     # Declare the reset handler that respawns nodes when robot_driver exits
 
     # reset_handler = launch.actions.RegisterEventHandler(
