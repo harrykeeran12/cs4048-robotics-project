@@ -1,6 +1,7 @@
 import rclpy
 from geometry_msgs.msg import Twist
 from controller import Supervisor
+
 HALF_DISTANCE_BETWEEN_WHEELS = 0.045
 WHEEL_RADIUS = 0.025
 
@@ -30,14 +31,20 @@ class MyRobotDriver:
         self.createBall()
 
     def createBall(self):
-        """Creates a new ball when the ball goes out of bounds. """
+        """Creates a new ball when the ball goes out of bounds."""
         self.supervisor = Supervisor()
+
         ball_string = """DEF BALL Ball {translation 0.21 -0.270544 0.05, rotation 1 0 0 1.5707963267948966, radius 0.05
         }"""
         rootNode = self.supervisor.getRoot()
+        
         rootNode.getField("children").importMFNodeFromString(-1, ball_string)
-        self.__node.get_logger().info("Ball has been created.")
 
+        self.__node.get_logger().info("Ball has been created.")
+        # Get the ball node.
+        ballNode = self.supervisor.getFromDef("BALL")
+        # Gets the x + y positions.
+        self.__node.get_logger().info(f"Ball is at position: {ballNode.getPosition()[0:2]}")
 
     def __cmd_vel_callback(self, twist):
         """This is a callback. This sets the twist output -> topic output twist to the twist."""
