@@ -7,7 +7,7 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/apartment_structure/protos/Wall.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/balls/protos/SoccerBall.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/floors/protos/CircleArena.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/balls/protos/Ball.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/balls/protos/Ball.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/robotis/darwin-op/protos/RobotisOp2.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/robotis/darwin-op/protos/RobotisJersey.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/samples/contests/robocup/protos/RobocupSoccerField.proto"
@@ -55,12 +55,8 @@ Wall {
   name "wall(2)"
   size 0.05 3.5 0.25
 }
-DEF soccer SoccerBall {
-  translation 0.98 0.2 0.08
-  radius 0.07
-  mass 0.5
-}
 Robot {
+  supervisor TRUE
   children [
     HingeJoint {
       jointParameters HingeJointParameters {
@@ -192,11 +188,6 @@ Robot {
   }
   controller "<extern>"
   name "my_robot"
-}
-
-DEF BALL Ball {
-  translation 0.21 -0.270544 0.0395646
-  rotation 1 0 0 1.5707963267948966
 }
 DEF ROBOTISOP2 RobotisOp2 {
   translation 1.1836644972626513 -0.18992731855477596 0.32638848483027677

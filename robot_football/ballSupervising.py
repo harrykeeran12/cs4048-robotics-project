@@ -6,12 +6,13 @@ from geometry_msgs.msg import Twist
 from rclpy.logging import get_logger
 
 class BallSupervisor(Node):
-  def init(self, webots_node, properties):
+  def __init__(self):
         super().__init__('ballSup')
         self.__publisher = self.create_publisher(String, '/ballPos', 1)
         self.logger = get_logger("log1")
   def step(self):
       print("Find ball.")
+      
         
 
 

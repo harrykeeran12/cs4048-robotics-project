@@ -26,9 +26,9 @@ def generate_launch_description():
         ],
         respawn=True,
     )
-    print(my_robot_driver)
+    # print(my_robot_driver)
 
-    print(f"WEBOTS NODEPACKAGE = {webots._supervisor.describe()}")
+    print(webots._supervisor)
 
     # Declare the reset handler that respawns nodes when robot_driver exits
 
@@ -38,21 +38,22 @@ def generate_launch_description():
     #         on_exit=get_ros2_control_spawners,
     #     )
     # )
-    # obstacle_avoider = Node(
-    #     package="robot-football",
-    #     executable="obstacleavoider",
-    # )
-    # ballSupervisor = Node(
-    #     package="robot-football",
-    #     executable="ballSupervisor",
-    # )
+    obstacle_avoider = Node(
+        package="robot_football",
+        executable="obstacle_avoid",
+    )
+    ballSupervisor = Node(
+        package="robot_football",
+        executable="ball_supervisor",
+    )
 
     return LaunchDescription(
         [
             webots,
             webots._supervisor,
             my_robot_driver,
-            # obstacle_avoider,
+            obstacle_avoider,
+            ballSupervisor,
             # reset_handler,
             launch.actions.RegisterEventHandler(
                 event_handler=launch.event_handlers.OnProcessExit(

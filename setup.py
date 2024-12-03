@@ -28,6 +28,8 @@ setup(
     entry_points={
           "console_scripts": [
             'my_robot_driver = robot_football.my_robot_driver:main',
+            "obstacle_avoid = robot_football.obstacle_avoider:main",
+            "ball_supervisor = robot_football.ballSupervising:main"
         ],
     },
 )
