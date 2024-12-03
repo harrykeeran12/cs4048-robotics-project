@@ -1,19 +1,17 @@
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
-from sensor_msgs.msg import Range
-from geometry_msgs.msg import Twist
-from rclpy.logging import get_logger
+from std_msgs.msg import Float32MultiArray
+
 
 class BallSupervisor(Node):
-  def __init__(self):
-        super().__init__('ballSup')
-        self.__publisher = self.create_publisher(String, '/ballPos', 1)
-        self.logger = get_logger("log1")
-  def step(self):
-      print("Find ball.")
-      
-        
+    def __init__(self):
+        super().__init__("ballSup")
+        self.__subscriber = self.create_subscription(Float32MultiArray, "/ballPos", callback=self.step(), qos_profile=1)
+
+    def step(self, message):
+        pass
+
 
 
 def main(args=None):
@@ -27,5 +25,5 @@ def main(args=None):
     rclpy.shutdown()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
