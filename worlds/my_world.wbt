@@ -2,15 +2,9 @@
 
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/gctronic/e-puck/protos/E-puck.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/Floor.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/apartment_structure/protos/Wall.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/balls/protos/SoccerBall.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/floors/protos/CircleArena.proto"
 IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/balls/protos/Ball.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/robotis/darwin-op/protos/RobotisOp2.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/robotis/darwin-op/protos/RobotisJersey.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/samples/contests/robocup/protos/RobocupSoccerField.proto"
 
 WorldInfo {
   basicTimeStep 16
@@ -25,7 +19,7 @@ TexturedBackgroundLight {
 }
 Floor {
   size 3.5 2
-  appearance Parquetry{
+  appearance Parquetry {
     type "dark strip"
   }
 }
@@ -55,15 +49,13 @@ Wall {
   name "wall(2)"
   size 0.05 3.5 0.25
 }
-Robot {
-  supervisor TRUE
+DEF PUCK Robot {
   children [
     HingeJoint {
       jointParameters HingeJointParameters {
         axis 0 1 0
         anchor 0 0 0.025
       }
-
       device [
         RotationalMotor {
           name "left wheel motor"
@@ -72,7 +64,7 @@ Robot {
       endPoint Solid {
         translation 0 0.045 0.025
         children [
-          DEF WHEEL Transform {
+          DEF WHEEL Pose {
             rotation 1 0 0 1.5707996938995747
             children [
               Shape {
@@ -116,7 +108,7 @@ Robot {
         }
       }
     }
-    Transform {
+    Pose {
       translation 0 0 0.0415
       children [
         Shape {
@@ -136,7 +128,7 @@ Robot {
       translation 0.042 0.02 0.063
       rotation 0 0 1 0.5236003061004253
       children [
-        DEF SENSOR Transform {
+        DEF SENSOR Pose {
           rotation 0 1 0 1.5708
           children [
             Shape {
@@ -178,7 +170,8 @@ Robot {
       aperture 1
     }
   ]
-  boundingObject Transform {
+  name "my_robot"
+  boundingObject Pose {
     translation 0 0 0.0415
     children [
       USE BODY
@@ -187,22 +180,5 @@ Robot {
   physics Physics {
   }
   controller "<extern>"
-  name "my_robot"
-}
-DEF ROBOTISOP2 RobotisOp2 {
-  translation 1.1836644972626513 -0.18992731855477596 0.32638848483027677
-  controller "soccer"
-  jersey RobotisJersey {
-    jerseyColor 0 1 0
-  }
-  name "goalie"
-}
-
-DEF ROBOTISOP2 RobotisOp2 {
-  translation -1.29 -0.2 0.59
-  rotation 0.08803743343552267 0.026206509952906663 0.9957723781819691 -3.100085307179586
-  controller "soccer"
-  jersey RobotisJersey {
-  }
-  name "scorer"
+  supervisor TRUE
 }
