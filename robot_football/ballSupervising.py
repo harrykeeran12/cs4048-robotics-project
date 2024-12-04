@@ -7,9 +7,12 @@ from std_msgs.msg import Float32MultiArray
 class BallSupervisor(Node):
     def __init__(self):
         super().__init__("ballSup")
-        self.__subscriber = self.create_subscription(Float32MultiArray, "/ballPos", callback=self.step(), qos_profile=1)
+        self.__subscriber = self.create_subscription(Float32MultiArray, "/ballPos", callback=self.__callback, qos_profile=1)
+    def __callback(self, message):
+        self.ballPos = message
 
-    def step(self, message):
+
+    def step(self):
         pass
 
 
