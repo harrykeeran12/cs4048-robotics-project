@@ -30,6 +30,7 @@ class MyRobotDriver:
         rclpy.init(args=None)
         self.__node = rclpy.create_node("my_robot_main")
         self.__node.create_subscription(Twist, "cmd_vel", self.__cmd_vel_callback, 1)
+        # Publisher for ball position.
         self.ballPublisher = self.__node.create_publisher(
             Float32MultiArray, "/ball_pos", qos_profile=1
         )
@@ -37,6 +38,7 @@ class MyRobotDriver:
         # create the ball and store some of its details as an attribute of this class instance
         # ideally we would have a ball class that stores some of this but idc
         self.createBall()
+        # Get the translation field for the ball, so we can amend it later.
         self.ball_translation_field = self.ballNode.getField("translation")
 
         # counts the number of goals, currently we dont do anything with this
@@ -55,12 +57,13 @@ class MyRobotDriver:
             f"The right wall is at {self.rightWallNode.getPosition()}"
         )
         # Find the middle of the goal.
-        self.MiddleOfGoal = ((self.leftWallPos[0] + self.rightWallPos[0]) / 2, (self.leftWallPos[1] + self.rightWallPos[1]) / 2)
-
-        self.__node.get_logger().info(
-            f"Middle of the goal: {self.MiddleOfGoal}"
+        self.MiddleOfGoal = (
+            (self.leftWallPos[0] + self.rightWallPos[0]) / 2,
+            (self.leftWallPos[1] + self.rightWallPos[1]) / 2,
         )
-        
+
+        self.__node.get_logger().info(f"Middle of the goal: {self.MiddleOfGoal}")
+
         # stores a reference to the physical robot as an attribute of this class instance
         self.puck = self.supervisor.getFromDef("PUCK")
         # similarly to the ball, we get a reference to the position of the robot so we can change it later
@@ -91,6 +94,25 @@ class MyRobotDriver:
 
         self.ballPublisher.publish(msg=self.ballPos)
 
+    def dist(self) -> float:
+        """Get the distance between the ball and the robot. SF is a single field."""
+        puckPos = self.puck_translation_field.getSFVec3f()
+        ballPos = self.ball_translation_field.getSFVec3f()
+        # Distance away from the robot's position and the ball's position.
+        robotAwayBall = math.sqrt(
+            (ballPos[0] - puckPos[0]) ** 2
+            + (ballPos[1] - puckPos[1]) ** 2
+        )
+        # self.__node.get_logger().info(f"Distance between puck and ball is: {robotAwayBall} ")
+        return robotAwayBall
+
+    def isColliding(self):
+        """Checks for a collision with the ball."""
+        if self.dist() < 0.05 * 2:
+            self.__node.get_logger().info("Collision occurred!")
+            return True
+        return False
+
     def __cmd_vel_callback(self, twist):
         """This is a callback. This sets the twist output -> topic output twist to the twist."""
         self.__target_twist = twist
@@ -101,28 +123,29 @@ class MyRobotDriver:
         self.publishBallPosition()
 
         # Getting the distance between the ball and middle of goal.
-        
+
         # Get the gradient first:
 
-        self.distanceBetweenGoalAndBall = math.sqrt((self.ballPos.data[0] + self.MiddleOfGoal[0]) - (self.ballPos.data[1] + self.ballPos.data[1]))
+        if self.isColliding():
+            pass
+
+        self.distanceBetweenGoalAndBall = math.sqrt(
+            (self.ballPos.data[0] + self.MiddleOfGoal[0])
+            - (self.ballPos.data[1] + self.ballPos.data[1])
+        )
 
         self.deltaY = abs(self.ballPos.data[1] - self.MiddleOfGoal[1])
 
         self.deltaX = abs(self.ballPos.data[0] - self.MiddleOfGoal[0])
         # gradient between the goal and the ball.
-        self.GABgrad = self.deltaY / self.deltaX 
-        
+        self.GABgrad = self.deltaY / self.deltaX
+
         # angle between the goal and the ball.
         self.GABangle = math.atan2(self.deltaY, self.deltaX)
 
-
-        self.__node.get_logger().info(
-            f" Angle between goal and ball: {self.GABangle}"
-        )
-
-        self.__node.get_logger().info(
-            f" Gradient between goal and ball: {self.GABgrad}"
-        )
+        # self.__node.get_logger().info(
+        #     f" Angle between goal and ball: {self.GABangle}, \n Gradient between goal and ball: {self.GABgrad}"
+        # )
 
         forward_speed = self.__target_twist.linear.x
         angular_speed = self.__target_twist.angular.z
@@ -139,9 +162,11 @@ class MyRobotDriver:
 
         # this handles goal logic, detecting a goal has happened and randomizing the positions of the ball and the robot
         # currently does not clear their velocity but this is a trivial modification
-        if self.ballNode.getPosition()[0] > 1.75:
+        if self.ballPos.data[0] > 1.75:
             new_value = [random.uniform(-1.35, 1.35), random.uniform(-0.7, 0.7), 0.1]
             self.ball_translation_field.setSFVec3f(new_value)
+            self.ballNode.addForce([0, 0, 0], relative=False)
+            self.ballNode.resetPhysics()
 
             newer_value = [
                 random.uniform(-1.35, 1.35),
@@ -149,4 +174,5 @@ class MyRobotDriver:
                 0.001,
             ]
             self.puck_translation_field.setSFVec3f(newer_value)
+            self.puck.resetPhysics()
             self.goals += 1
