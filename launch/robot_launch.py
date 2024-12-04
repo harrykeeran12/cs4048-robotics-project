@@ -38,10 +38,10 @@ def generate_launch_description():
     #         on_exit=get_ros2_control_spawners,
     #     )
     # )
-    obstacle_avoider = Node(
-        package="robot_football",
-        executable="obstacle_avoid",
-    )
+    # obstacle_avoider = Node(
+    #     package="robot_football",
+    #     executable="obstacle_avoid",
+    # )
     ballSupervisor = Node(
         package="robot_football",
         executable="ball_supervisor",
@@ -52,7 +52,7 @@ def generate_launch_description():
             webots,
             webots._supervisor,
             my_robot_driver,
-            obstacle_avoider,
+            # obstacle_avoider,
             ballSupervisor,
             # reset_handler,
             launch.actions.RegisterEventHandler(
