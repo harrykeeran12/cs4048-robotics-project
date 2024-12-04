@@ -35,6 +35,8 @@ class MyRobotDriver:
             Float32MultiArray, "/ball_pos", qos_profile=1
         )
 
+        self.movementPublisher = self.__node.create_publisher(Twist, "cmd_vel", 1)
+
         # create the ball and store some of its details as an attribute of this class instance
         # ideally we would have a ball class that stores some of this but idc
         self.createBall()
@@ -100,11 +102,42 @@ class MyRobotDriver:
         ballPos = self.ball_translation_field.getSFVec3f()
         # Distance away from the robot's position and the ball's position.
         robotAwayBall = math.sqrt(
-            (ballPos[0] - puckPos[0]) ** 2
-            + (ballPos[1] - puckPos[1]) ** 2
+            (ballPos[0] - puckPos[0]) ** 2 + (ballPos[1] - puckPos[1]) ** 2
         )
         # self.__node.get_logger().info(f"Distance between puck and ball is: {robotAwayBall} ")
         return robotAwayBall
+
+    def movetoPoint(self, xPoint: float, yPoint: float):
+        """Moves the robot to a new point."""
+
+        # Calculate the angle at which you need to travel, using atan2.
+        puckX, puckY = self.puck_translation_field.getSFVec3f()[0:2]
+
+        thetaZ = self.puck.getField("rotation").getSFRotation()[3]
+
+        self.__node.get_logger().info(f"Puck pose: {thetaZ}")
+        command_message = Twist()
+
+        # distance = math.sqrt((puckX - xPoint) ** 2 + (puckY - yPoint) ** 2)
+
+        deltaX = abs(puckX - xPoint)
+
+        deltaY = abs(puckY - yPoint)
+
+        grad = deltaY / deltaX
+
+        pointAngle = math.atan2(deltaY, deltaX)
+        # Moves straight.
+
+        if abs(pointAngle) == thetaZ:
+            # Tries to fix the angle at a specific point. 
+            command_message.linear.x = 0.1
+            command_message.linear.y = 0.1
+        else:
+            # Tries to counteract the difference.
+            command_message.angular.z = pointAngle - thetaZ
+
+        self.movementPublisher.publish(command_message)
 
     def isColliding(self):
         """Checks for a collision with the ball."""
@@ -124,14 +157,12 @@ class MyRobotDriver:
 
         # Getting the distance between the ball and middle of goal.
 
-        # Get the gradient first:
-
-        if self.isColliding():
-            pass
+        if not self.isColliding():
+            self.movetoPoint(xPoint=self.ballPos.data[0], yPoint=self.ballPos.data[1])
 
         self.distanceBetweenGoalAndBall = math.sqrt(
-            (self.ballPos.data[0] + self.MiddleOfGoal[0])
-            - (self.ballPos.data[1] + self.ballPos.data[1])
+            (self.ballPos.data[0] - self.MiddleOfGoal[0]) ** 2
+            + (self.ballPos.data[1] - self.ballPos.data[1]) ** 2
         )
 
         self.deltaY = abs(self.ballPos.data[1] - self.MiddleOfGoal[1])

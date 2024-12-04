@@ -42,10 +42,10 @@ def generate_launch_description():
     #     package="robot_football",
     #     executable="obstacle_avoid",
     # )
-    ballSupervisor = Node(
-        package="robot_football",
-        executable="ball_supervisor",
-    )
+    # ballSupervisor = Node(
+    #     package="robot_football",
+    #     executable="ball_supervisor",
+    # )
 
     return LaunchDescription(
         [
@@ -53,7 +53,7 @@ def generate_launch_description():
             webots._supervisor,
             my_robot_driver,
             # obstacle_avoider,
-            ballSupervisor,
+            # ballSupervisor,
             # reset_handler,
             launch.actions.RegisterEventHandler(
                 event_handler=launch.event_handlers.OnProcessExit(
