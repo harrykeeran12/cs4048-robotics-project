@@ -9,7 +9,7 @@ This project implements a basic robot football simulation using Webots and ROS2.
 
 ## Directory Overview
 
-The project structure is as follows:
+```The project structure is as follows:
 .
 ├── launch
 │   └── robot_launch.py
@@ -32,6 +32,7 @@ The project structure is as follows:
 │   └── test_pep257.py
 └── worlds
     └── my_world.wbt
+```
 
 
 ### Key Files and Folders
