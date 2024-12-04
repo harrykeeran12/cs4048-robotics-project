@@ -105,5 +105,5 @@ Follow these steps to build and launch the simulation:
 To validate the package's compliance and functionality, run the automated tests:
 
 ```bash
-colcon test```
+colcon test
 
