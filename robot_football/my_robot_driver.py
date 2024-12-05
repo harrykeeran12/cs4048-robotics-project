@@ -7,10 +7,13 @@ import math
 
 HALF_DISTANCE_BETWEEN_WHEELS = 0.045
 WHEEL_RADIUS = 0.025
+CORNER_X = 1.6
+CORNER_Y = 0.9
 
 
 class MyRobotDriver:
     """Robot that plays football."""
+
     def init(self, webots_node, properties):
         """Initialisation node to start the robot with Webots."""
         self.__robot = webots_node.robot
@@ -168,6 +171,27 @@ class MyRobotDriver:
             return True
         return False
 
+    def resetWorld(self):
+        """Resets the world + randomise the place of the ball + bot."""
+        new_ball_value = [
+            random.uniform(-1.35, 1.35),
+            random.uniform(-0.7, 0.7),
+            0.1,
+        ]
+        self.ball_translation_field.setSFVec3f(new_ball_value)
+        self.ballNode.addForce([0, 0, 0], relative=False)
+        self.ballNode.resetPhysics()
+
+        new_puck_value = [
+            random.uniform(-1.35, 1.35),
+            random.uniform(-0.7, 0.7),
+            0.001,
+        ]
+        self.puck_translation_field.setSFVec3f(new_puck_value)
+        self.puck.resetPhysics()
+        self.goals += 1
+        self.state = "reposition"  # Reset cycle after scoring
+
     def __cmd_vel_callback(self, twist):
         self.__target_twist = twist
 
@@ -196,7 +220,8 @@ class MyRobotDriver:
         current_time = self.supervisor.getTime()
 
         # self.__node.get_logger().info(f"State: {self.state}")
-        # self.__node.get_logger().info(f"Robot Pos: ({puckPos[0]:.2f},{puckPos[1]:.2f}) Ball Pos: ({ballPos[0]:.2f},{ballPos[1]:.2f})")
+        # self.__node.get_logger().info(f"Robot Pos: ({puckPos[0]:.2f},{puckPos[1]:.2f}))
+        # self.__node.get_logger().info(f"Ball Pos: ({ballPos[0]:.2f},{ballPos[1]:.2f})")
         # self.__node.get_logger().info(f"Behind Ball Point: ({behind_ball_point[0]:.2f},{behind_ball_point[1]:.2f})")
 
         # Distances for logic
@@ -259,21 +284,23 @@ class MyRobotDriver:
 
         # Goal logic
         if self.ballPos.data[0] > 1.75:
-            new_ball_value = [
-                random.uniform(-1.35, 1.35),
-                random.uniform(-0.7, 0.7),
-                0.1,
-            ]
-            self.ball_translation_field.setSFVec3f(new_ball_value)
+            self.resetWorld()
+
+        # Corner logic:
+        if (
+            abs(self.ballPos.data[0]) >= CORNER_X
+            and abs(self.ballPos.data[1]) > CORNER_Y
+        ):
+            self.__node.get_logger().info("Free kick.")
+
+            self.ball_translation_field.setSFVec3f([1, 0, 0.1])
             self.ballNode.addForce([0, 0, 0], relative=False)
             self.ballNode.resetPhysics()
 
             new_puck_value = [
-                random.uniform(-1.35, 1.35),
-                random.uniform(-0.7, 0.7),
+                -1,
+                0,
                 0.001,
             ]
             self.puck_translation_field.setSFVec3f(new_puck_value)
             self.puck.resetPhysics()
-            self.goals += 1
-            self.state = "reposition"  # Reset cycle after scoring
