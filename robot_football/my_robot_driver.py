@@ -109,13 +109,12 @@ class MyRobotDriver:
 
     def movetoPoint(self, xPoint: float, yPoint: float):
         """Moves the robot to a new point."""
-
+        
         # Calculate the angle at which you need to travel, using atan2.
         puckX, puckY = self.puck_translation_field.getSFVec3f()[0:2]
 
         thetaZ = self.puck.getField("rotation").getSFRotation()[3]
 
-        self.__node.get_logger().info(f"Puck pose: {thetaZ}")
         command_message = Twist()
 
         # distance = math.sqrt((puckX - xPoint) ** 2 + (puckY - yPoint) ** 2)
@@ -126,16 +125,30 @@ class MyRobotDriver:
 
         grad = deltaY / deltaX
 
-        pointAngle = math.atan2(deltaY, deltaX)
-        # Moves straight.
+        pointAngle = math.atan2(deltaY, deltaX)        
 
-        if abs(pointAngle) == thetaZ:
-            # Tries to fix the angle at a specific point. 
+        # self.__node.get_logger().info(f"Angle between current + point: {pointAngle} rad or {(180 / math.pi) * pointAngle} deg")
+
+        # self.__node.get_logger().info(f"Current angle: {thetaZ} rad / {(180 / math.pi) * thetaZ} deg ")
+
+        # Calculates the difference in angle
+
+        if pointAngle - thetaZ < 0:
+            command_message.angular.z = math.pi * 0.5
+        else:
+            command_message.angular.z = - math.pi * 0.5
+
+        # Move to the point
+        # Check if the goal point is less than the puck's
+        if xPoint > puckX:
             command_message.linear.x = 0.1
+        else:
+            command_message.linear.x = -0.1
+        # Check if the goal point is less than the puck's
+        if yPoint > puckY: 
             command_message.linear.y = 0.1
         else:
-            # Tries to counteract the difference.
-            command_message.angular.z = pointAngle - thetaZ
+            command_message.linear.y = -0.1
 
         self.movementPublisher.publish(command_message)
 
@@ -158,11 +171,14 @@ class MyRobotDriver:
         # Getting the distance between the ball and middle of goal.
 
         if not self.isColliding():
+            # Move to the point
             self.movetoPoint(xPoint=self.ballPos.data[0], yPoint=self.ballPos.data[1])
+
+
 
         self.distanceBetweenGoalAndBall = math.sqrt(
             (self.ballPos.data[0] - self.MiddleOfGoal[0]) ** 2
-            + (self.ballPos.data[1] - self.ballPos.data[1]) ** 2
+            + (self.ballPos.data[1] - self.MiddleOfGoal[1]) ** 2
         )
 
         self.deltaY = abs(self.ballPos.data[1] - self.MiddleOfGoal[1])
