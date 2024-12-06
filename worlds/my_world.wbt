@@ -10,8 +10,8 @@ WorldInfo {
   basicTimeStep 16
 }
 Viewpoint {
-  orientation -0.0904627427199622 0.7650665953179577 0.6375653667728275 0.495137625424549
-  position -3.6509161811369197 -1.3426750665759049 1.7288849791692718
+  orientation -0.2520210851060381 0.1146247803271558 0.9609092217254063 2.378649759356771
+  position 0.829207320257714 -0.7811734204359506 0.7027383884217923
 }
 TexturedBackground {
 }
@@ -27,9 +27,8 @@ Wall {
   translation -1.75 -0.01 -0.01
   size 0.05 2 0.25
 }
-
 DEF RIGHTGOAL Wall {
-  translation 1.75 -0.7 -0.01   
+  translation 1.75 -0.7 -0.01
   name "wall(4)"
   size 0.05 0.625 0.25
 }
@@ -118,16 +117,15 @@ DEF PUCK Robot {
             roughness 1
             metalness 0
           }
-          geometry DEF BODY Cylinder {
-            height 0.08
-            radius 0.045
+          geometry DEF BODY Box {
+            size 0.09 0.08 0.07
           }
         }
       ]
     }
     DistanceSensor {
-      translation 0.042 0.02 0.063
-      rotation 0 0 1 0.5236003061004253
+      translation 0.047 0.02 0.063
+      rotation 0 0 -1 -5.307179586466759e-06
       children [
         DEF SENSOR Pose {
           rotation 0 1 0 1.5708
@@ -156,8 +154,8 @@ DEF PUCK Robot {
       aperture 1
     }
     DistanceSensor {
-      translation 0.042 -0.02 0.063
-      rotation 0 0 1 -0.5235996938995747
+      translation 0.048 -0.02 0.063
+      rotation 0 0 -1 9.20018e-07
       children [
         USE SENSOR
       ]
