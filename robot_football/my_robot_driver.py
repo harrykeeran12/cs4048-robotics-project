@@ -72,7 +72,7 @@ class MyRobotDriver:
         # Find the middle of the goal.
         self.MiddleOfGoal = (
             (self.leftWallPos[0] + self.rightWallPos[0]) / 2,
-            (self.leftWallPos[1] + self.rightWallPos[1]) / 2,
+            ((self.leftWallPos[1] + self.rightWallPos[1]) / 2) + 0.1,
         )
 
         self.__node.get_logger().info(f"Middle of the goal: {self.MiddleOfGoal}")
@@ -84,7 +84,7 @@ class MyRobotDriver:
         """Creates a new ball initially."""
         self.supervisor = Supervisor()
 
-        ball_string = """DEF BALL Ball {translation 0.21 -0.270544 0.05, rotation 1 0 0 1.5707963267948966, radius 0.05
+        ball_string = """DEF BALL Ball {translation 0.21 -0.270544 0.05, rotation 1 0 0 1.5707963267948966, radius 0.02
         }"""
         rootNode = self.supervisor.getRoot()
         rootNode.getField("children").importMFNodeFromString(-1, ball_string)
